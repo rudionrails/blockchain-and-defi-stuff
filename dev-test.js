@@ -1,4 +1,7 @@
-const { Block, genesis, mine } = require("./src/block");
+const { createBlockchain } = require("./src/blockchain");
 
-const foo = mine(genesis, "foo");
-console.log(foo.toString());
+const blockchain = createBlockchain();
+
+for (let i = 0; i < 10; i++) {
+  blockchain.addBlock(`foo ${i}`);
+}

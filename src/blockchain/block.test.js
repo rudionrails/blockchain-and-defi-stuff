@@ -1,5 +1,11 @@
-const { createBlock, mineBlock, genesisBlock } = require("./block");
-const { DIFFICULTY } = require("../config");
+const {
+  createBlock,
+  mineBlock,
+  genesisBlock,
+  adjustDifficulty,
+} = require("./block");
+
+const { MINE_RATE } = require("../config");
 
 describe("Block", () => {
   const data = "mock data";
@@ -19,8 +25,18 @@ describe("Block", () => {
   });
 
   test("to generate a hash that matches the difficulty", () => {
-    expect(subject.hash.substring(0, DIFFICULTY)).toEqual(
-      "0".repeat(DIFFICULTY)
+    expect(subject.hash.substring(0, subject.difficulty)).toEqual(
+      "0".repeat(subject.difficulty)
     );
+  });
+
+  test("to lower the difficulty for blocks mined too slow", () => {
+    const time = subject.timestamp + MINE_RATE + 1;
+    expect(adjustDifficulty(subject, time)).toEqual(subject.difficulty - 1);
+  });
+
+  test("to raise the difficulty for blocks mined too fast", () => {
+    const time = subject.timestamp + MINE_RATE - 1;
+    expect(adjustDifficulty(subject, time)).toEqual(subject.difficulty + 1);
   });
 });
