@@ -29,13 +29,13 @@ function createBlockchain() {
 
     replaceChain(newChain) {
       if (newChain.length <= chain.length) {
-        console.error("Received chain is not longer than the current chain");
+        console.log("Received chain is not longer than the current chain");
 
         return;
       }
 
       if (!isValidChain(newChain)) {
-        console.error("Received chain is not valid");
+        console.log("Received chain is not valid");
 
         return;
       }
