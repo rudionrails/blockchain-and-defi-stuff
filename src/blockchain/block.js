@@ -1,8 +1,10 @@
-const sha256 = require("crypto-js/sha256");
 const { DIFFICULTY, MINE_RATE } = require("../config");
+const { generateHash } = require("../utils");
 
 const createHash = (timestamp, lastHash, data, nonce, difficulty) =>
-  sha256(`${timestamp}-${lastHash}-${data}-${nonce}-${difficulty}`).toString();
+  generateHash(
+    `${timestamp}-${lastHash}-${data}-${nonce}-${difficulty}`
+  ).toString();
 
 function createBlock(timestamp, lastHash, hash, data, nonce, difficulty) {
   return {
