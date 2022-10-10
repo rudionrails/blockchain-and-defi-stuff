@@ -1,7 +1,5 @@
-const { createBlockchain } = require("./src/blockchain");
+const { createWallet } = require("./src/wallet");
 
-const blockchain = createBlockchain();
+const wallet = createWallet();
 
-for (let i = 0; i < 10; i++) {
-  blockchain.addBlock(`foo ${i}`);
-}
+console.log("Wallet:", wallet);
