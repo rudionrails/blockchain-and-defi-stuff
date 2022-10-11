@@ -1,4 +1,4 @@
-const { createTransaction } = require("./transaction");
+const { createTransaction, verifyTransaction } = require("./transaction");
 const { createWallet } = require("./index");
 
 describe("Transaction", () => {
@@ -24,6 +24,15 @@ describe("Transaction", () => {
 
   test("to input the balance of the wallet", () => {
     expect(subject.input.amount).toEqual(wallet.balance);
+  });
+
+  test("to validate the transaction", () => {
+    expect(verifyTransaction(subject)).toBe(true);
+  });
+
+  test("to invalidate a corrupt transaction", () => {
+    subject.outputs[0].amount = 50000;
+    expect(verifyTransaction(subject)).toBe(false);
   });
 });
 

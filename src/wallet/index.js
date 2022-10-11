@@ -6,16 +6,25 @@ function createWallet() {
   const keyPair = genKeyPair();
   const publicKey = keyPair.getPublic().encode("hex");
 
-  function sign(dataHash) {
-    return keyPair.sign(dataHash);
-  }
-
   return {
     publicKey,
     balance,
-    sign,
+
+    sign(dataHash) {
+      return keyPair.sign(dataHash);
+    },
   };
 }
+
+// function createTransaction(recipient, amount, transactionPool) {
+//   if (amount > balance) {
+//     console.log(`Amount ${amount} exceeds the balance (${balance})`);
+//     return;
+//   }
+//
+//   const transaction = createTransaction(wallet, recipient, amount);
+//   transactionPool.push(transaction);
+// }
 
 module.exports = {
   createWallet,

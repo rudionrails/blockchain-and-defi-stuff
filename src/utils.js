@@ -4,20 +4,15 @@ const { v1: uuidV1 } = require("uuid");
 
 const ec = new EC("secp256k1");
 
-function genKeyPair() {
-  return ec.genKeyPair();
-}
-
-function uuid() {
-  return uuidV1();
-}
-
-function generateHash(data) {
-  return SHA256(JSON.stringify(data)).toString();
-}
+const genKeyPair = () => ec.genKeyPair();
+const uuid = () => uuidV1();
+const generateHash = (data) => SHA256(JSON.stringify(data)).toString();
+const verifySignature = (publicKey, signature, dataHash) =>
+  ec.keyFromPublic(publicKey, "hex").verify(dataHash, signature);
 
 module.exports = {
   genKeyPair,
   uuid,
   generateHash,
+  verifySignature,
 };

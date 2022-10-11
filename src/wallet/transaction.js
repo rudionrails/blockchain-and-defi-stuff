@@ -1,12 +1,10 @@
-const { uuid, generateHash } = require("../utils");
+const { uuid, generateHash, verifySignature } = require("../utils");
 
 function createTransaction(senderWallet, recipient, amount) {
   if (amount > senderWallet.balance) {
     console.log(`Amount ${amount} exceeds balance`);
     return;
   }
-
-  const id = uuid();
 
   const outputs = [
     {
@@ -18,7 +16,6 @@ function createTransaction(senderWallet, recipient, amount) {
       address: recipient,
     },
   ];
-
   const input = {
     timestamp: Date.now(),
     amount: senderWallet.balance,
@@ -26,13 +23,20 @@ function createTransaction(senderWallet, recipient, amount) {
     signature: senderWallet.sign(generateHash(outputs)),
   };
 
-  return {
-    id,
+  return Object.freeze({
+    id: uuid(),
     input,
     outputs,
-  };
+  });
+}
+
+function verifyTransaction(transaction) {
+  const { address, signature } = transaction.input;
+
+  return verifySignature(address, signature, generateHash(transaction.outputs));
 }
 
 module.exports = {
   createTransaction,
+  verifyTransaction,
 };
