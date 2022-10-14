@@ -23,11 +23,11 @@ function createTransaction(senderWallet, recipient, amount) {
     signature: senderWallet.sign(generateHash(outputs)),
   };
 
-  return Object.freeze({
+  return {
     id: uuid(),
     input,
     outputs,
-  });
+  };
 }
 
 function verifyTransaction(transaction) {

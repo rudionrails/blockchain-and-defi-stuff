@@ -29,7 +29,10 @@ function createBlockchain() {
 
     replaceChain(newChain) {
       if (newChain.length <= chain.length) {
-        console.log("Received chain is not longer than the current chain");
+        console.log(
+          "Received chain is not longer than the current chain",
+          chain
+        );
 
         return;
       }

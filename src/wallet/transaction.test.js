@@ -38,7 +38,7 @@ describe("Transaction", () => {
 
 describe("Transaction with too high amount", () => {
   const wallet = createWallet();
-  const amount = 5000;
+  const amount = 50000;
   const recipient = "r3c1p13nt";
 
   let subject;

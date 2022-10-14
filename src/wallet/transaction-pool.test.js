@@ -1,15 +1,16 @@
 const { createTransactionPool } = require("./transaction-pool");
-const { createTransaction } = require("./transaction");
-const { createWallet } = require("./index");
+const { createWallet, createTransactionCreator } = require("./index");
 
 describe("Transaction Pool", () => {
   const wallet = createWallet();
-  const transaction = createTransaction(wallet, "som3-4ddr3ss", 30);
+  let createTransaction;
+  let transaction;
   let subject;
 
   beforeEach(() => {
     subject = createTransactionPool();
-    subject.add(transaction);
+    createTransaction = createTransactionCreator(wallet, subject);
+    transaction = createTransaction("som3-4ddr3ss", 30);
   });
 
   test("to add a transaction to the pool", () => {
@@ -17,5 +18,35 @@ describe("Transaction Pool", () => {
       (t) => t.id === transaction.id
     );
     expect(foundTransaction).toEqual(transaction);
+  });
+
+  describe("with valid and invalid transactions", () => {
+    let validTransactions;
+
+    beforeEach(() => {
+      validTransactions = [...subject.transactions];
+
+      for (let i = 0; i < 1; i++) {
+        const tx = createTransaction("some-other-address", 30);
+
+        if (i % 2 === 0) {
+          tx.input.amount = 99999; // corrupt transaction
+        } else {
+          validTransactions.push(tx);
+        }
+      }
+    });
+
+    test("to show a difference between valid and corrupt transactions", () => {
+      expect(JSON.stringify(subject.transactions)).not.toEqual(
+        JSON.stringify(validTransactions)
+      );
+    });
+
+    test("to grab valid transactions", () => {
+      console.log("validTx", subject.validTransactions());
+
+      expect(subject.validTransactions()).toEqual(validTransactions);
+    });
   });
 });

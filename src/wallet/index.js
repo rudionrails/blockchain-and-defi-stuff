@@ -1,5 +1,6 @@
-const { genKeyPair } = require("../utils");
 const { INITIAL_BALANCE } = require("../config");
+const { genKeyPair } = require("../utils");
+const { createTransaction } = require("./transaction");
 
 function createWallet() {
   let balance = INITIAL_BALANCE;
@@ -16,16 +17,15 @@ function createWallet() {
   };
 }
 
-// function createTransaction(recipient, amount, transactionPool) {
-//   if (amount > balance) {
-//     console.log(`Amount ${amount} exceeds the balance (${balance})`);
-//     return;
-//   }
-//
-//   const transaction = createTransaction(wallet, recipient, amount);
-//   transactionPool.push(transaction);
-// }
+const createTransactionCreator =
+  (wallet, transactionPool) => (recipient, amount) => {
+    const transaction = createTransaction(wallet, recipient, amount);
+    transactionPool.add(transaction);
+
+    return transaction;
+  };
 
 module.exports = {
   createWallet,
+  createTransactionCreator,
 };

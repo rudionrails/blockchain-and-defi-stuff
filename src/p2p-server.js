@@ -2,16 +2,38 @@ const Websocket = require("ws");
 
 const P2P_PORT = process.env.P2P_PORT || 5001;
 const peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
+const MESSAGE_TYPES = {
+  CHAIN: "CHAIN",
+  TRANSACTION: "TRANSACTION",
+};
 
-function createP2pServer(blockchain) {
+function sendChain(socket, blockchain) {
+  socket.send(
+    JSON.stringify({
+      type: MESSAGE_TYPES.CHAIN,
+      data: blockchain.chain,
+    })
+  );
+}
+
+function sendTransaction(socket, transaction) {
+  socket.send(
+    JSON.stringify({
+      type: MESSAGE_TYPES.TRANSACTION,
+      data: transaction,
+    })
+  );
+}
+
+function createP2pServer(blockchain, transactionPool) {
   const sockets = [];
 
   function connectSocket(socket) {
-    sockets.push(socket);
     console.log("Socket connected");
+    sockets.push(socket);
 
-    messageHandler(socket);
-    sendChain(socket);
+    handleMessage(socket);
+    sendChain(socket, blockchain);
   }
 
   function connectPeers() {
@@ -21,15 +43,17 @@ function createP2pServer(blockchain) {
     });
   }
 
-  function messageHandler(socket) {
+  function handleMessage(socket) {
     socket.on("message", (message) => {
-      const data = JSON.parse(message);
-      blockchain.replaceChain(data);
-    });
-  }
+      const { type, data } = JSON.parse(message);
+      console.log("Message:", type, data);
 
-  function sendChain(socket) {
-    socket.send(JSON.stringify(blockchain.chain));
+      if (type === MESSAGE_TYPES.CHAIN) {
+        blockchain.replaceChain(data);
+      } else if (type === MESSAGE_TYPES.TRANSACTION) {
+        transactionPool.add(data);
+      }
+    });
   }
 
   return {
@@ -44,7 +68,13 @@ function createP2pServer(blockchain) {
 
     syncChains() {
       sockets.forEach((socket) => {
-        sendChain(socket);
+        sendChain(socket, blockchain);
+      });
+    },
+
+    broadcastTransaction(transaction) {
+      sockets.forEach((socket) => {
+        sendTransaction(socket, transaction);
       });
     },
   };
