@@ -1,5 +1,10 @@
-const { createTransaction, verifyTransaction } = require("./transaction");
-const { createWallet } = require("./index");
+const { MINING_REWARD } = require("../config");
+const { createWallet, createBlockchainWallet } = require("./index");
+const {
+  createTransaction,
+  createRewardTransaction,
+  verifyTransaction,
+} = require("./transaction");
 
 describe("Transaction", () => {
   const wallet = createWallet();
@@ -49,5 +54,24 @@ describe("Transaction with too high amount", () => {
 
   test("to not create the transaction", () => {
     expect(subject).toBe(undefined);
+  });
+});
+
+describe("Reward Transaction", () => {
+  const minerWallet = createWallet();
+  const blockchainWallet = createBlockchainWallet();
+
+  let subject;
+
+  beforeEach(() => {
+    subject = createRewardTransaction(minerWallet, blockchainWallet);
+  });
+
+  test("to reward the miner's `wallet`", () => {
+    const output = subject.outputs.find(
+      (o) => (o.address = minerWallet.publicKey)
+    );
+
+    expect(output.amount).toEqual(MINING_REWARD);
   });
 });

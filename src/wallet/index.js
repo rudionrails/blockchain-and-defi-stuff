@@ -17,6 +17,13 @@ function createWallet() {
   };
 }
 
+function createBlockchainWallet() {
+  const wallet = createWallet();
+  wallet.address = "blockchain-wallet";
+
+  return wallet;
+}
+
 const createTransactionCreator =
   (wallet, transactionPool) => (recipient, amount) => {
     const transaction = createTransaction(wallet, recipient, amount);
@@ -27,5 +34,6 @@ const createTransactionCreator =
 
 module.exports = {
   createWallet,
+  createBlockchainWallet,
   createTransactionCreator,
 };

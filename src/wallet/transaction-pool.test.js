@@ -44,8 +44,6 @@ describe("Transaction Pool", () => {
     });
 
     test("to grab valid transactions", () => {
-      console.log("validTx", subject.validTransactions());
-
       expect(subject.validTransactions()).toEqual(validTransactions);
     });
   });
