@@ -1,15 +1,20 @@
+const { createBlockchain } = require("../blockchain");
 const { createTransactionPool } = require("./transaction-pool");
 const { createWallet, createTransactionCreator } = require("./index");
 
 describe("Transaction Pool", () => {
-  const wallet = createWallet();
   let createTransaction;
   let transaction;
+
+  let wallet;
+  let blockchain;
   let subject;
 
   beforeEach(() => {
+    wallet = createWallet();
+    blockchain = createBlockchain();
     subject = createTransactionPool();
-    createTransaction = createTransactionCreator(wallet, subject);
+    createTransaction = createTransactionCreator(wallet, blockchain, subject);
     transaction = createTransaction("som3-4ddr3ss", 30);
   });
 
@@ -18,6 +23,12 @@ describe("Transaction Pool", () => {
       (t) => t.id === transaction.id
     );
     expect(foundTransaction).toEqual(transaction);
+  });
+
+  test("to clear the transactions", () => {
+    subject.clear();
+
+    expect(subject.transactions).toEqual([]);
   });
 
   describe("with valid and invalid transactions", () => {

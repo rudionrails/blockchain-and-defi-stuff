@@ -5,6 +5,7 @@ const peers = process.env.PEERS ? process.env.PEERS.split(",") : [];
 const MESSAGE_TYPES = {
   CHAIN: "CHAIN",
   TRANSACTION: "TRANSACTION",
+  CLEAR_TRANSACTIONS: "CLEAR_TRANSACTIONS",
 };
 
 function sendChain(socket, blockchain) {
@@ -21,6 +22,14 @@ function sendTransaction(socket, transaction) {
     JSON.stringify({
       type: MESSAGE_TYPES.TRANSACTION,
       data: transaction,
+    })
+  );
+}
+
+function clearTransactions(socket) {
+  socket.send(
+    JSON.stringify({
+      type: MESSAGE_TYPES.CLEAR_TRANSACTIONS,
     })
   );
 }
@@ -52,6 +61,8 @@ function createP2pServer(blockchain, transactionPool) {
         blockchain.replaceChain(data);
       } else if (type === MESSAGE_TYPES.TRANSACTION) {
         transactionPool.add(data);
+      } else if (type === MESSAGE_TYPES.CLEAR_TRANSACTIONS) {
+        transactionPool.clear();
       }
     });
   }
@@ -76,6 +87,10 @@ function createP2pServer(blockchain, transactionPool) {
       sockets.forEach((socket) => {
         sendTransaction(socket, transaction);
       });
+    },
+
+    broadcastClearTransactions() {
+      sockets.forEach((socket) => clearTransactions(socket));
     },
   };
 }

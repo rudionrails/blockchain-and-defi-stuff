@@ -7,19 +7,20 @@ const {
 } = require("./transaction");
 
 describe("Transaction", () => {
-  const wallet = createWallet();
   const amount = 50;
   const recipient = "r3c1p13nt";
 
+  let wallet;
   let subject;
 
   beforeEach(() => {
+    wallet = createWallet();
     subject = createTransaction(wallet, recipient, amount);
   });
 
   test("to output the `amount` subtracted from the wallet balance", () => {
     const output = subject.outputs.find((o) => o.address === wallet.publicKey);
-    expect(output.amount).toEqual(wallet.balance - amount);
+    expect(output.amount).toEqual(wallet.balance() - amount);
   });
 
   test("outputs the `amount` added to the recipient", () => {
@@ -28,7 +29,7 @@ describe("Transaction", () => {
   });
 
   test("to input the balance of the wallet", () => {
-    expect(subject.input.amount).toEqual(wallet.balance);
+    expect(subject.input.amount).toEqual(wallet.balance());
   });
 
   test("to validate the transaction", () => {
@@ -42,13 +43,14 @@ describe("Transaction", () => {
 });
 
 describe("Transaction with too high amount", () => {
-  const wallet = createWallet();
   const amount = 50000;
   const recipient = "r3c1p13nt";
 
+  let wallet;
   let subject;
 
   beforeEach(() => {
+    wallet = createWallet();
     subject = createTransaction(wallet, recipient, amount);
   });
 
@@ -58,12 +60,13 @@ describe("Transaction with too high amount", () => {
 });
 
 describe("Reward Transaction", () => {
-  const minerWallet = createWallet();
-  const blockchainWallet = createBlockchainWallet();
-
+  let minerWallet;
+  let blockchainWallet;
   let subject;
 
   beforeEach(() => {
+    minerWallet = createWallet();
+    blockchainWallet = createBlockchainWallet();
     subject = createRewardTransaction(minerWallet, blockchainWallet);
   });
 

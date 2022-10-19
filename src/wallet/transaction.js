@@ -2,14 +2,14 @@ const { uuid, generateHash, verifySignature } = require("../utils");
 const { MINING_REWARD } = require("../config");
 
 function newTransaction(senderWallet, amount, outputs) {
-  if (amount > senderWallet.balance) {
+  if (amount > senderWallet.balance()) {
     console.log(`Amount ${amount} exceeds balance`);
     return;
   }
 
   const input = {
     timestamp: Date.now(),
-    amount: senderWallet.balance,
+    amount: senderWallet.balance(),
     address: senderWallet.publicKey,
     signature: senderWallet.sign(generateHash(outputs)),
   };
@@ -24,7 +24,7 @@ function newTransaction(senderWallet, amount, outputs) {
 function createTransaction(senderWallet, recipient, amount) {
   const outputs = [
     {
-      amount: senderWallet.balance - amount,
+      amount: senderWallet.balance() - amount,
       address: senderWallet.publicKey,
     },
     {

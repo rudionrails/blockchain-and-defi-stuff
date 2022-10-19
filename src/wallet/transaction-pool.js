@@ -3,10 +3,6 @@ const { verifyTransaction } = require("./transaction");
 function createTransactionPool() {
   const transactions = [];
 
-  function add(transaction) {
-    transactions.push(transaction);
-  }
-
   function validTransactions() {
     return transactions.filter((transaction) => {
       const outputTotal = transaction.outputs.reduce(
@@ -36,8 +32,15 @@ function createTransactionPool() {
 
   return Object.freeze({
     transactions,
-    add,
     validTransactions,
+
+    add(transaction) {
+      transactions.push(transaction);
+    },
+
+    clear() {
+      transactions.splice(0, transactions.length);
+    },
   });
 }
 
