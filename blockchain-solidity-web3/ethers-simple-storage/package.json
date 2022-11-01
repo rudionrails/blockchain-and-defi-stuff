@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "compile": "solcjs --bin --abi --include-path node_modules --base-path . -o SimpleStorage.sol"
+  },
+  "dependencies": {
+    "solc": "^0.8.17"
+  }
+}
