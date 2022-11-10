@@ -1,8 +1,14 @@
 {
   "scripts": {
-    "compile": "solcjs --bin --abi --include-path node_modules --base-path . -o SimpleStorage.sol"
+    "compile": "solcjs --bin --abi --include-path node_modules --base-path . SimpleStorage.sol",
+    "deploy": "npm run compile && node deploy.js"
   },
   "dependencies": {
+    "ethers": "^5.7.2",
     "solc": "^0.8.17"
+  },
+  "devDependencies": {
+    "@yummy/dotenv": "^4.0.1",
+    "fs-extra": "^10.1.0"
   }
 }
