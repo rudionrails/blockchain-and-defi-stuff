@@ -6,21 +6,49 @@
 // global scope, and execute the script.
 const hre = require("hardhat");
 
+const { chainId } = hre.network.config;
+console.log(hre.network.config);
+
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
-
-  const lockedAmount = hre.ethers.utils.parseEther("1");
-
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+  const SimpleStorageFactory = await hre.ethers.getContractFactory(
+    "SimpleStorage"
   );
+  const simpleStorage = await SimpleStorageFactory.deploy();
+  await simpleStorage.deployed();
+
+  console.log("SimpleStorage deployed to", simpleStorage.address);
+
+  // 5 is the ethereum goerli test network chain id
+  if (chainId === 5 && process.env.ETHERSCAN_API_KEY !== "") {
+    await simpleStorage.deployTransaction.wait(6); // wait 6 blocks
+    await verify(simpleStorage.address, []);
+  }
+
+  const currentValue = await simpleStorage.retrieve();
+  console.log(`current value: ${currentValue}`);
+
+  const transactionResponse = await simpleStorage.store(7);
+  await transactionResponse.wait(1);
+
+  const updatedValue = await simpleStorage.retrieve();
+  console.log(`updated value: ${updatedValue}`);
+}
+
+async function verify(address, constructorArguments) {
+  console.log("Verifying contract");
+
+  try {
+    await hre.run("verify:verify", {
+      address,
+      constructorArguments,
+    });
+  } catch (e) {
+    if (e.message.toLowerCase().includes("already verified")) {
+      console.log("already verified");
+    } else {
+      console.error(e);
+    }
+  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
