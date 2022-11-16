@@ -1,7 +1,7 @@
 const ethers = require("ethers");
 const fs = require("fs-extra");
 
-require("@yummy/dotenv").config();
+require("@yummy/dotenv/config");
 
 const JSON_FILENAME = ".encryptedKey.json";
 const ABI_FILENAME = "SimpleStorage_sol_SimpleStorage.abi";
