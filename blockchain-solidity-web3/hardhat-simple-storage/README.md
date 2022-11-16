@@ -1,6 +1,7 @@
 # Hardhat Simple Storage
 
 Link: https://www.youtube.com/watch?v=gyMwXuJrbJQ&t=30017s
+Github: https://github.com/smartcontractkit/full-blockchain-solidity-course-js#lesson-6-hardhat-simple-storage
 
 Try running some of the following tasks:
 

@@ -1,10 +1,11 @@
-require("@yummy/dotenv/config");
-require("@nomicfoundation/hardhat-toolbox");
-require("@nomiclabs/hardhat-etherscan");
-require("hardhat-gas-reporter");
-require("solidity-coverage");
+import "@yummy/dotenv/config";
+import "@nomicfoundation/hardhat-toolbox";
+import "@nomiclabs/hardhat-etherscan";
+import "hardhat-gas-reporter";
+import "solidity-coverage";
+import "@typechain/hardhat";
 
-require("./tasks/block-number");
+import "./tasks/block-number";
 
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL;
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
